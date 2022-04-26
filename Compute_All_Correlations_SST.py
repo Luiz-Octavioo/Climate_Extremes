@@ -1,7 +1,8 @@
 # Import Modules
 
 import xarray as xr
-from esmtools.stats import corr
+# from esmtools.stats import corr
+import xskillscore as xs
 from esmtools.grid import convert_lon
 import os
 import glob
@@ -28,13 +29,13 @@ precip_path = 'Precip_COR'
 temp_path = 'Temp_COR'
 
 # Change dir
-os.chdir('/home/luiz/climate_change/ETCCDI_Extremes/Anual/Anual-Temp/')
+os.chdir('/home/luiz/climate_change/ETCCDI_Extremes/Anual/Anual-Precip/')
 
 # Create directory to save correlations
 for region in nino_regions:
     if not os.path.exists(f'{path}{region}/{temp_path}'):
-        # os.mkdir(f'{path}{region}/{precip_path}/')
-        os.mkdir(f'{path}{region}/{temp_path}/')
+        os.mkdir(f'{path}{region}/{precip_path}/')
+        # os.mkdir(f'{path}{region}/{temp_path}/')
 
 nino_lat_lon = {'NINO1+2': {'lat': [-10, 0], 'lon': [280, 290]}, 'NINO3': {'lat': [-5, 5], 'lon': [210, 270]},
                 'NINO4': {'lat': [-5, 5], 'lon': [160, 210]}, 'NINO34': {'lat': [-5, 5], 'lon': [190, 240]},
@@ -64,8 +65,8 @@ shp = '/home/luiz/Documentos/Shapefiles/South_America/South_America.shp'
 # Create list with Extremes ETCCDI Index
 ETCCDI_index = glob.glob('*nc')
 # Sort list by other list
-# list_index = ['r10mm', 'r20mm', 'r30mm', 'rx1day', 'rx5day', 'prcptot', 'sdii', 'r95p', 'r99p', 'cwd', 'cdd']
-list_index = ['txx', 'tnx', 'txn', 'tnn', 'dtr', 'wsdi', 'csdi', 'tx90p', 'tn90p', 'tx10p', 'tn10p', 'fd']
+list_index = ['r10mm', 'r20mm', 'r30mm', 'rx1day', 'rx5day', 'prcptot', 'sdii', 'r95p', 'r99p', 'cwd', 'cdd']
+# list_index = ['txx', 'tnx', 'txn', 'tnn', 'dtr', 'wsdi', 'csdi', 'tx90p', 'tn90p', 'tx10p', 'tn10p', 'fd']
 ETCCDI_index = [x for x in ETCCDI_index if x.split('_')[0] in list_index]
 ETCCDI_index.sort(key=lambda x: list_index.index(x.split('_')[0]))
 
@@ -95,14 +96,16 @@ for nino, name_nino in zip(nino_data, nino_regions):
         print(f'{index_name.upper()} - Calculate Correlation between {name_nino} Region')
 
         # Calculate correlation
-        cor, p = corr(nino.sst, ds[getvar(ds)], dim='time', return_p=True)
+        # cor, p = corr(nino.sst, ds[getvar(ds)], dim='time', return_p=True)
+        cor = xs.pearson_r(nino.sst, ds[getvar(ds)], dim='time')
+        p = xs.pearson_r_eff_p_value(nino.sst, ds[getvar(ds)], dim='time')
 
         # Merge Params
         da = merge_params(cor, p, name_stats='cor', name_sig='sig')
 
         # Exportar arquivos
         print(f'Saving File {index_name}_COR_{name_nino}.nc')
-        da.to_netcdf(f'{path}{name_nino}/{temp_path}/' + f'{index_name}_COR_{name_nino}.nc')
+        da.to_netcdf(f'{path}{name_nino}/{precip_path}/' + f'{index_name}_COR_{name_nino}.nc')
 
         print('Done!')
     print(f'Done correlations between {name_nino} Region')
