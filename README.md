@@ -20,3 +20,9 @@ Os dados de precipitação são oriundos do CPC Global Unified Gauge-Based Analy
 CPC Global Daily Temperature.
 
 Neste repositório são encontrados notebooks, scripts com processamento e analise destes dados. 
+
+
+Apoio:
+
+
+Agradecemos o apoio da Fundação de Amparo à Pesquisa do Estado do Amazonas – FAPEAM através do incentivo à qualificação por meio do Edital Nº 012/2021 – POSGFE e a Coordenação de Aperfeiçoamento de Pessoal de Nível Superior – Brasil (CAPES) - Código de Financiamento 001.![ASSINATURA-INSTITUCIONAL-FAPEAM PNG](https://user-images.githubusercontent.com/50222429/176266856-49fc158e-67b5-4c78-963e-80f47954a448.png)
